@@ -1,0 +1,6 @@
+{
+  "name": "DukaanFlow",
+  "description": "Small business management SaaS for shops in India with POS billing, inventory tracking, credit ledger, and financial analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
