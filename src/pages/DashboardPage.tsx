@@ -10,6 +10,7 @@ import { MetricCard } from '../components/common/MetricCard';
 import { DataTable, Column } from '../components/common/DataTable';
 import { ReceiptModal } from '../components/common/ReceiptModal';
 import { formatINR, formatDate } from '../utils/formatters';
+import { useTranslation } from '../context/LanguageContext';
 import {
   IndianRupee,
   TrendingUp,
@@ -30,6 +31,7 @@ interface DashboardPageProps {
 }
 
 export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }) => {
+  const { t } = useTranslation();
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [recentSales, setRecentSales] = useState<Sale[]>([]);
   const [lowStockProducts, setLowStockProducts] = useState<Product[]>([]);
@@ -228,7 +230,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }
           </p>
         </div>
 
-        {/* Date Filter Segmented Controls (functional buttons with click handlers) */}
+        {/* Date Filter Segmented Controls */}
         <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg shrink-0">
           <button
             onClick={() => setDateFilter('today')}
@@ -238,7 +240,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Today
+            {t('today')}
           </button>
           <button
             onClick={() => setDateFilter('yesterday')}
@@ -248,7 +250,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Yesterday
+            {t('yesterday')}
           </button>
           <button
             onClick={() => setDateFilter('week')}
@@ -258,7 +260,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Last 7 Days
+            {t('last_7_days')}
           </button>
           <button
             onClick={() => setDateFilter('month')}
@@ -268,15 +270,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            This Month
+            {t('this_month')}
           </button>
         </div>
       </div>
 
-      {/* 6 Primary KPIs Grid (Required by section 4) */}
+      {/* 6 Primary KPIs Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <MetricCard
-          title="Today's Sales Revenue"
+          title={t('today_sales')}
           value={formatINR(metrics?.today_sales_revenue)}
           subtitle={dateFilter !== 'today' ? `Period: ${formatINR(metrics?.period_sales_revenue)}` : undefined}
           icon={IndianRupee}
@@ -288,7 +290,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }
         />
 
         <MetricCard
-          title="Today's Gross Profit"
+          title={t('gross_profit')}
           value={formatINR(metrics?.today_gross_profit)}
           subtitle="Revenue minus item cost snapshots"
           icon={TrendingUp}
@@ -296,7 +298,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }
         />
 
         <MetricCard
-          title="Recorded Expenses"
+          title={t('expenses')}
           value={formatINR(metrics?.today_recorded_expenses)}
           subtitle={dateFilter !== 'today' ? `Period: ${formatINR(metrics?.period_expenses)}` : 'Today operating overhead'}
           icon={Receipt}
@@ -308,7 +310,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }
         />
 
         <MetricCard
-          title="Estimated Net Profit"
+          title={t('net_profit')}
           value={formatINR(metrics?.today_net_operating_profit)}
           subtitle="Gross profit minus expenses"
           icon={PiggyBank}
@@ -318,7 +320,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }
         />
 
         <MetricCard
-          title="Outstanding Customer Credit"
+          title={t('outstanding_credit')}
           value={formatINR(metrics?.total_outstanding_credit)}
           subtitle="Total Udhar balance across ledger"
           icon={Users}
@@ -332,7 +334,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }
         />
 
         <MetricCard
-          title="Low-Stock Alerts"
+          title={t('low_stock_alerts')}
           value={String(metrics?.low_stock_count ?? 0)}
           subtitle="Items at or below reorder threshold"
           icon={AlertTriangle}

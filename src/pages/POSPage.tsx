@@ -23,7 +23,11 @@ import {
   UserPlus,
   ArrowRight,
   Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  SlidersHorizontal,
 } from 'lucide-react';
+import { useTranslation } from '../context/LanguageContext';
 
 interface POSPageProps {
   shop: Shop;
@@ -31,6 +35,7 @@ interface POSPageProps {
 }
 
 export const POSPage: React.FC<POSPageProps> = ({ shop }) => {
+  const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -49,6 +54,65 @@ export const POSPage: React.FC<POSPageProps> = ({ shop }) => {
   const [isNewCustomerModalOpen, setIsNewCustomerModalOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState('');
   const [newCustomerPhone, setNewCustomerPhone] = useState('');
+
+  // Category horizontal scroll & movable bar state
+  const categoryScrollRef = useRef<HTMLDivElement>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+
+  const checkScrollState = () => {
+    if (!categoryScrollRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = categoryScrollRef.current;
+    setCanScrollLeft(scrollLeft > 5);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
+    const maxScroll = scrollWidth - clientWidth;
+    if (maxScroll > 0) {
+      setScrollProgress(Math.round((scrollLeft / maxScroll) * 100));
+    } else {
+      setScrollProgress(0);
+    }
+  };
+
+  const handleScrollCategories = (direction: 'left' | 'right') => {
+    if (!categoryScrollRef.current) return;
+    const offset = direction === 'left' ? -220 : 220;
+    categoryScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+    setTimeout(checkScrollState, 220);
+  };
+
+  const handleSliderScroll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Number(e.target.value);
+    setScrollProgress(val);
+    if (!categoryScrollRef.current) return;
+    const { scrollWidth, clientWidth } = categoryScrollRef.current;
+    const maxScroll = scrollWidth - clientWidth;
+    categoryScrollRef.current.scrollLeft = (val / 100) * maxScroll;
+    checkScrollState();
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!categoryScrollRef.current) return;
+    isDraggingRef.current = true;
+    startXRef.current = e.pageX - categoryScrollRef.current.offsetLeft;
+    scrollLeftRef.current = categoryScrollRef.current.scrollLeft;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingRef.current || !categoryScrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - categoryScrollRef.current.offsetLeft;
+    const walk = (x - startXRef.current) * 1.5;
+    categoryScrollRef.current.scrollLeft = scrollLeftRef.current - walk;
+    checkScrollState();
+  };
+
+  const handleMouseUpOrLeave = () => {
+    isDraggingRef.current = false;
+  };
 
   // Completed sale receipt state
   const [completedSale, setCompletedSale] = useState<Sale | null>(null);
@@ -252,21 +316,93 @@ export const POSPage: React.FC<POSPageProps> = ({ shop }) => {
               />
             </div>
 
-            {/* Category Filter Buttons */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-              {categories.map((cat) => (
+            {/* Category Filter with Movable Bar & Scroll Chevrons */}
+            <div className="space-y-2 pt-1 border-t border-slate-100">
+              <div className="flex items-center gap-2">
+                {/* Scroll Left Button */}
                 <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors shrink-0 ${
-                    selectedCategory === cat
-                      ? 'bg-teal-800 text-white shadow-xs font-semibold'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                  type="button"
+                  onClick={() => handleScrollCategories('left')}
+                  disabled={!canScrollLeft}
+                  title="Scroll left"
+                  aria-label="Scroll left categories"
+                  className={`p-1.5 rounded-lg border text-slate-600 transition-colors shrink-0 ${
+                    canScrollLeft
+                      ? 'bg-slate-100 hover:bg-teal-50 hover:text-teal-800 border-slate-200 cursor-pointer'
+                      : 'bg-slate-50 text-slate-300 border-slate-100 cursor-not-allowed opacity-50'
                   }`}
                 >
-                  {cat === 'all' ? 'All Products' : cat}
+                  <ChevronLeft className="w-4 h-4" />
                 </button>
-              ))}
+
+                {/* Categories Scrollable Strip (Supports Mouse Pan, Touch Pan & Native Scroll) */}
+                <div
+                  ref={categoryScrollRef}
+                  onScroll={checkScrollState}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUpOrLeave}
+                  onMouseLeave={handleMouseUpOrLeave}
+                  className="flex items-center gap-1.5 overflow-x-auto py-1 scroll-smooth select-none cursor-grab active:cursor-grabbing flex-1 [scrollbar-width:thin] [scrollbar-color:#0d9488_#f1f5f9]"
+                >
+                  {categories.map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors shrink-0 ${
+                        selectedCategory === cat
+                          ? 'bg-teal-800 text-white shadow-xs font-semibold'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                      }`}
+                    >
+                      {cat === 'all' ? 'All Products' : cat}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Scroll Right Button */}
+                <button
+                  type="button"
+                  onClick={() => handleScrollCategories('right')}
+                  disabled={!canScrollRight}
+                  title="Scroll right to see next categories (Household, Cleaners, etc.)"
+                  aria-label="Scroll right categories"
+                  className={`p-1.5 rounded-lg border text-slate-600 transition-colors shrink-0 ${
+                    canScrollRight
+                      ? 'bg-slate-100 hover:bg-teal-50 hover:text-teal-800 border-slate-200 cursor-pointer'
+                      : 'bg-slate-50 text-slate-300 border-slate-100 cursor-not-allowed opacity-50'
+                  }`}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Movable Bar / Interactive Category Slider */}
+              <div className="flex items-center gap-3 px-1 pt-0.5 text-[11px] text-slate-500 bg-slate-50/80 p-2 rounded-lg border border-slate-100">
+                <div className="flex items-center gap-1 shrink-0 font-medium text-slate-600">
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-teal-700" />
+                  <span className="hidden sm:inline">Movable Bar:</span>
+                  <span>Slide to explore</span>
+                </div>
+
+                <div className="flex-1 relative flex items-center">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={scrollProgress}
+                    onChange={handleSliderScroll}
+                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-ew-resize accent-teal-800 hover:bg-slate-300 transition-colors"
+                    title="Slide to scroll categories left and right"
+                    aria-label="Categories movable scroll bar"
+                  />
+                </div>
+
+                <div className="text-[10px] text-teal-800 font-mono font-medium shrink-0 bg-teal-50 px-2 py-0.5 rounded border border-teal-200/60">
+                  {categories.length} Categories · Slide right for more
+                </div>
+              </div>
             </div>
           </div>
 

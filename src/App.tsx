@@ -15,7 +15,7 @@ import { ProductsPage } from './pages/ProductsPage';
 import { CustomersPage } from './pages/CustomersPage';
 import { ExpensesPage } from './pages/ExpensesPage';
 import { ReportsPage } from './pages/ReportsPage';
-import { DatabaseHubPage } from './pages/DatabaseHubPage';
+import { LanguageProvider } from './context/LanguageContext';
 
 export default function App() {
   const [user, setUser] = useState<AppUser | null>(null);
@@ -76,46 +76,40 @@ export default function App() {
     );
   }
 
-  // If not signed in, show Auth
-  if (!user) {
-    return <AuthPage onAuthenticated={handleAuthenticated} />;
-  }
-
-  // If signed in but no shop created yet, show Shop Onboarding
-  if (!shop) {
-    return <ShopOnboardingPage user={user} onShopCreated={handleShopCreated} />;
-  }
-
-  // Authenticated with active store
   return (
-    <AppLayout
-      user={user}
-      shop={shop}
-      activePage={activePage}
-      onNavigate={setActivePage}
-      onSignOut={handleSignOut}
-    >
-      {activePage === 'dashboard' && (
-        <DashboardPage shop={shop} onNavigate={setActivePage} />
+    <LanguageProvider>
+      {!user ? (
+        <AuthPage onAuthenticated={handleAuthenticated} />
+      ) : !shop ? (
+        <ShopOnboardingPage user={user} onShopCreated={handleShopCreated} />
+      ) : (
+        <AppLayout
+          user={user}
+          shop={shop}
+          activePage={activePage}
+          onNavigate={setActivePage}
+          onSignOut={handleSignOut}
+        >
+          {activePage === 'dashboard' && (
+            <DashboardPage shop={shop} onNavigate={setActivePage} />
+          )}
+          {activePage === 'pos' && (
+            <POSPage shop={shop} onNavigate={setActivePage} />
+          )}
+          {activePage === 'products' && (
+            <ProductsPage shop={shop} />
+          )}
+          {activePage === 'customers' && (
+            <CustomersPage shop={shop} />
+          )}
+          {activePage === 'expenses' && (
+            <ExpensesPage shop={shop} />
+          )}
+          {activePage === 'reports' && (
+            <ReportsPage shop={shop} />
+          )}
+        </AppLayout>
       )}
-      {activePage === 'pos' && (
-        <POSPage shop={shop} onNavigate={setActivePage} />
-      )}
-      {activePage === 'products' && (
-        <ProductsPage shop={shop} />
-      )}
-      {activePage === 'customers' && (
-        <CustomersPage shop={shop} />
-      )}
-      {activePage === 'expenses' && (
-        <ExpensesPage shop={shop} />
-      )}
-      {activePage === 'reports' && (
-        <ReportsPage shop={shop} />
-      )}
-      {activePage === 'database' && (
-        <DatabaseHubPage />
-      )}
-    </AppLayout>
+    </LanguageProvider>
   );
 }

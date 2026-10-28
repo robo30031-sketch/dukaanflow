@@ -8,12 +8,15 @@ import { Shop, Customer, CreditEntry } from '../types/database';
 import {
   getCustomers,
   createCustomer,
+  deleteCustomer,
+  deleteAllCustomers,
   getCreditEntries,
   recordCreditRepayment,
   exportCsv,
 } from '../services/db';
 import { DataTable, Column } from '../components/common/DataTable';
 import { Modal } from '../components/common/Modal';
+import { ConfirmDialog } from '../components/common/ConfirmDialog';
 import { formatINR, formatDate } from '../utils/formatters';
 import {
   Users,
@@ -26,13 +29,16 @@ import {
   CheckCircle2,
   Clock,
   History,
+  Trash2,
 } from 'lucide-react';
+import { useTranslation } from '../context/LanguageContext';
 
 interface CustomersPageProps {
   shop: Shop;
 }
 
 export const CustomersPage: React.FC<CustomersPageProps> = ({ shop }) => {
+  const { t } = useTranslation();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
@@ -54,6 +60,39 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({ shop }) => {
   const [repayNotes, setRepayNotes] = useState('');
   const [repayError, setRepayError] = useState<string | null>(null);
   const [isRepaying, setIsRepaying] = useState(false);
+
+  // Delete Customer Contact Modals
+  const [customerToDelete, setCustomerToDelete] = useState<Customer | null>(null);
+  const [isDeleteCustomerModalOpen, setIsDeleteCustomerModalOpen] = useState(false);
+  const [isDeleteAllCustomersModalOpen, setIsDeleteAllCustomersModalOpen] = useState(false);
+
+  const handleDeleteCustomerConfirm = async () => {
+    if (!customerToDelete) return;
+    try {
+      await deleteCustomer(shop.id, customerToDelete.id);
+      if (selectedCustomer?.id === customerToDelete.id) {
+        setSelectedCustomer(null);
+        setCustomerLedger([]);
+      }
+      setIsDeleteCustomerModalOpen(false);
+      setCustomerToDelete(null);
+      await loadCustomers();
+    } catch (err: any) {
+      console.error('Failed to delete customer:', err);
+    }
+  };
+
+  const handleDeleteAllCustomersConfirm = async () => {
+    try {
+      await deleteAllCustomers(shop.id);
+      setSelectedCustomer(null);
+      setCustomerLedger([]);
+      setIsDeleteAllCustomersModalOpen(false);
+      await loadCustomers();
+    } catch (err: any) {
+      console.error('Failed to delete all customers:', err);
+    }
+  };
 
   const loadCustomers = async () => {
     setIsLoading(true);
@@ -208,16 +247,29 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({ shop }) => {
       header: '',
       align: 'right',
       render: (c) => (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            loadCustomerLedger(c);
-          }}
-          className="text-xs font-semibold text-teal-800 hover:underline flex items-center gap-1 justify-end"
-        >
-          <span>View Khata</span>
-          <BookOpen className="w-3.5 h-3.5" />
-        </button>
+        <div className="flex items-center gap-1.5 justify-end">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              loadCustomerLedger(c);
+            }}
+            className="text-xs font-semibold text-teal-800 hover:underline flex items-center gap-1"
+          >
+            <span>View Khata</span>
+            <BookOpen className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setCustomerToDelete(c);
+              setIsDeleteCustomerModalOpen(true);
+            }}
+            title="Remove Contact"
+            className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
       ),
     },
   ];
@@ -235,13 +287,24 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({ shop }) => {
           </p>
         </div>
 
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="px-3.5 py-1.5 text-xs font-semibold text-white bg-teal-800 hover:bg-teal-900 rounded-lg transition-colors flex items-center gap-1.5 shadow-xs whitespace-nowrap"
-        >
-          <UserPlus className="w-3.5 h-3.5" />
-          <span>Add New Customer</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {customers.length > 0 && (
+            <button
+              onClick={() => setIsDeleteAllCustomersModalOpen(true)}
+              className="px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 rounded-lg transition-colors flex items-center gap-1.5"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Remove All Contacts</span>
+            </button>
+          )}
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="px-3.5 py-1.5 text-xs font-semibold text-white bg-teal-800 hover:bg-teal-900 rounded-lg transition-colors flex items-center gap-1.5 shadow-xs whitespace-nowrap"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>Add New Customer</span>
+          </button>
+        </div>
       </div>
 
       {/* Two Column Layout: Customer Directory (Left) & Customer Ledger Detail (Right) */}
@@ -308,6 +371,17 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({ shop }) => {
                     >
                       <Download className="w-3 h-3" />
                       <span>CSV</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCustomerToDelete(selectedCustomer);
+                        setIsDeleteCustomerModalOpen(true);
+                      }}
+                      title="Remove Contact from Khata"
+                      className="px-2.5 py-1 text-xs text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 rounded-lg flex items-center gap-1 transition-colors"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      <span>Delete Contact</span>
                     </button>
                     {(selectedCustomer.current_balance || 0) > 0 && (
                       <button
@@ -594,6 +668,28 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({ shop }) => {
           </div>
         </form>
       </Modal>
+
+      {/* Delete Single Customer Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={isDeleteCustomerModalOpen}
+        onClose={() => setIsDeleteCustomerModalOpen(false)}
+        onConfirm={handleDeleteCustomerConfirm}
+        title="Remove Customer Contact"
+        message={`Are you sure you want to remove "${customerToDelete?.name}" from your Udhar Khata? All their historical ledger records will be deleted.`}
+        confirmLabel="Remove Contact"
+        isDestructive={true}
+      />
+
+      {/* Delete All Customers Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={isDeleteAllCustomersModalOpen}
+        onClose={() => setIsDeleteAllCustomersModalOpen(false)}
+        onConfirm={handleDeleteAllCustomersConfirm}
+        title="Remove All Customer Contacts"
+        message="Are you sure you want to remove ALL contacts and clear the entire Udhar Khata book? This will permanently wipe all credit ledger balances."
+        confirmLabel="Wipe All Contacts"
+        isDestructive={true}
+      />
     </div>
   );
 };

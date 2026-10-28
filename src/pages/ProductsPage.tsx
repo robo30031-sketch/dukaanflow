@@ -9,7 +9,7 @@ import {
   getProducts,
   createProduct,
   updateProduct,
-  archiveProduct,
+  deleteProduct,
   adjustStock,
   exportCsv,
 } from '../services/db';
@@ -21,22 +21,23 @@ import {
   Package,
   Plus,
   Edit2,
-  Archive,
+  Trash2,
   ArrowUpDown,
   Download,
   AlertTriangle,
   CheckCircle2,
 } from 'lucide-react';
+import { useTranslation } from '../context/LanguageContext';
 
 interface ProductsPageProps {
   shop: Shop;
 }
 
 export const ProductsPage: React.FC<ProductsPageProps> = ({ shop }) => {
+  const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [includeArchived, setIncludeArchived] = useState(false);
 
   // Add / Edit Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,15 +61,14 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ shop }) => {
   const [adjustNotes, setAdjustNotes] = useState('');
   const [adjustError, setAdjustError] = useState<string | null>(null);
 
-  // Archive Confirm
-  const [isArchiveConfirmOpen, setIsArchiveConfirmOpen] = useState(false);
-  const [archivingProduct, setArchivingProduct] = useState<Product | null>(null);
+  // Delete Confirm
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
 
   const loadProducts = async () => {
     setIsLoading(true);
     try {
       const data = await getProducts(shop.id, {
-        includeArchived,
         category: selectedCategory !== 'all' ? selectedCategory : undefined,
       });
       setProducts(data);
@@ -81,7 +81,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ shop }) => {
 
   useEffect(() => {
     loadProducts();
-  }, [shop.id, selectedCategory, includeArchived]);
+  }, [shop.id, selectedCategory]);
 
   const categories = ['all', ...Array.from(new Set(products.map((p) => p.category)))];
 
@@ -199,15 +199,15 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ shop }) => {
     }
   };
 
-  const handleArchiveConfirm = async () => {
-    if (!archivingProduct) return;
+  const handleDeleteConfirm = async () => {
+    if (!deletingProduct) return;
     try {
-      await archiveProduct(shop.id, archivingProduct.id);
-      setIsArchiveConfirmOpen(false);
-      setArchivingProduct(null);
+      await deleteProduct(shop.id, deletingProduct.id);
+      setIsDeleteConfirmOpen(false);
+      setDeletingProduct(null);
       loadProducts();
     } catch (err: any) {
-      console.error('Failed to archive product:', err);
+      console.error('Failed to delete product:', err);
     }
   };
 
@@ -222,7 +222,6 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ shop }) => {
       'Stock Quantity',
       'Low Stock Threshold',
       'Unit',
-      'Archived',
       'Created At',
     ];
     const rows = products.map((p) => [
@@ -235,7 +234,6 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ shop }) => {
       p.stock_quantity,
       p.low_stock_threshold,
       p.unit,
-      p.is_archived ? 'Yes' : 'No',
       p.created_at,
     ]);
     exportCsv(`${shop.name}_Inventory`, headers, rows);
@@ -306,20 +304,6 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ shop }) => {
       },
     },
     {
-      key: 'status',
-      header: 'Status',
-      align: 'center',
-      render: (p) => (
-        <span
-          className={`text-[11px] font-medium ${
-            p.is_archived ? 'text-slate-400' : 'text-emerald-700'
-          }`}
-        >
-          {p.is_archived ? 'Archived' : 'Active'}
-        </span>
-      ),
-    },
-    {
       key: 'actions',
       header: 'Actions',
       align: 'right',
@@ -339,18 +323,16 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ shop }) => {
           >
             <Edit2 className="w-3.5 h-3.5" />
           </button>
-          {!p.is_archived && (
-            <button
-              onClick={() => {
-                setArchivingProduct(p);
-                setIsArchiveConfirmOpen(true);
-              }}
-              title="Archive Product"
-              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
-            >
-              <Archive className="w-3.5 h-3.5" />
-            </button>
-          )}
+          <button
+            onClick={() => {
+              setDeletingProduct(p);
+              setIsDeleteConfirmOpen(true);
+            }}
+            title="Delete Product"
+            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
         </div>
       ),
     },
@@ -404,16 +386,6 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ shop }) => {
             </button>
           ))}
         </div>
-
-        <label className="flex items-center gap-2 text-xs text-slate-500 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={includeArchived}
-            onChange={(e) => setIncludeArchived(e.target.checked)}
-            className="w-3.5 h-3.5 text-teal-800 rounded border-slate-300"
-          />
-          <span>Show archived products</span>
-        </label>
       </div>
 
       {/* Main Table */}
@@ -680,14 +652,14 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ shop }) => {
         </form>
       </Modal>
 
-      {/* Archive Confirmation Dialog */}
+      {/* Delete Confirmation Dialog */}
       <ConfirmDialog
-        isOpen={isArchiveConfirmOpen}
-        onClose={() => setIsArchiveConfirmOpen(false)}
-        onConfirm={handleArchiveConfirm}
-        title="Archive Product"
-        message={`Are you sure you want to archive "${archivingProduct?.name}"? It will be hidden from new POS sales, but historical sales invoices will retain this product snapshot.`}
-        confirmLabel="Archive Product"
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Product"
+        message={`Are you sure you want to permanently delete "${deletingProduct?.name}"? This will remove the item from your store inventory.`}
+        confirmLabel="Delete Product"
         isDestructive={true}
       />
     </div>

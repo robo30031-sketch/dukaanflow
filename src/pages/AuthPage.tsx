@@ -6,8 +6,7 @@
 import React, { useState } from 'react';
 import { signIn, signUp } from '../services/db';
 import { AppUser } from '../types/database';
-import { getSupabaseConfig } from '../services/supabaseClient';
-import { Store, ShieldCheck, Database, ArrowRight, Sparkles } from 'lucide-react';
+import { Store, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
 
 interface AuthPageProps {
   onAuthenticated: (user: AppUser) => void;
@@ -20,8 +19,6 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onAuthenticated }) => {
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  const supabaseConfig = getSupabaseConfig();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,14 +71,6 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onAuthenticated }) => {
         <p className="mt-1.5 text-xs text-slate-400">
           Small Business Management SaaS for Retail & Kirana Stores
         </p>
-
-        {/* Supabase status badge */}
-        <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-[#142E24] text-teal-300 border border-[#1E4435]">
-          <Database className="w-3 h-3 text-teal-400" />
-          <span>
-            {supabaseConfig.isConfigured ? 'Connected to Supabase PostgreSQL' : 'Dual-Engine: Supabase & Local Postgres Ready'}
-          </span>
-        </div>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md px-4">

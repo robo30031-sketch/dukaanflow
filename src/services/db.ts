@@ -267,18 +267,7 @@ export async function seedShopDemoInventory(shopId: string): Promise<void> {
     await createProduct(shopId, item);
   }
 
-  // Create initial demo customers for Udhar Khata
-  await createCustomer(shopId, {
-    name: 'Rajesh Kumar (Sharma Colony)',
-    phone: '9876543210',
-    notes: 'Regular monthly buyer, pays around 5th of every month',
-  });
-
-  await createCustomer(shopId, {
-    name: 'Pooja Verma',
-    phone: '9812345678',
-    notes: 'Local teacher, settlement via UPI',
-  });
+  // Note: No demo customers are pre-seeded into Udhar Khata so the user has an empty, clean khata book
 }
 
 // ============================================================================
@@ -449,6 +438,24 @@ export async function updateProduct(
   return updated;
 }
 
+export async function deleteProduct(shopId: string, productId: string): Promise<void> {
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', productId)
+      .eq('shop_id', shopId);
+    if (error) throw new Error(error.message);
+    return;
+  }
+
+  const existing = await localDB.get<Product>('products', productId);
+  if (existing && existing.shop_id === shopId) {
+    await localDB.delete('products', productId);
+  }
+}
+
 export async function archiveProduct(shopId: string, productId: string): Promise<void> {
   await updateProduct(shopId, productId, { is_archived: true });
 }
@@ -608,6 +615,41 @@ export async function createCustomer(
 
   await localDB.put('customers', customer);
   return customer;
+}
+
+export async function deleteCustomer(shopId: string, customerId: string): Promise<void> {
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    await supabase.from('credit_entries').delete().eq('customer_id', customerId).eq('shop_id', shopId);
+    const { error } = await supabase.from('customers').delete().eq('id', customerId).eq('shop_id', shopId);
+    if (error) throw new Error(error.message);
+    return;
+  }
+
+  const entries = await localDB.query<CreditEntry>('credit_entries', (e) => e.customer_id === customerId && e.shop_id === shopId);
+  for (const entry of entries) {
+    await localDB.delete('credit_entries', entry.id);
+  }
+  await localDB.delete('customers', customerId);
+}
+
+export async function deleteAllCustomers(shopId: string): Promise<void> {
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    await supabase.from('credit_entries').delete().eq('shop_id', shopId);
+    const { error } = await supabase.from('customers').delete().eq('shop_id', shopId);
+    if (error) throw new Error(error.message);
+    return;
+  }
+
+  const custs = await localDB.query<Customer>('customers', (c) => c.shop_id === shopId);
+  for (const c of custs) {
+    const entries = await localDB.query<CreditEntry>('credit_entries', (e) => e.customer_id === c.id);
+    for (const entry of entries) {
+      await localDB.delete('credit_entries', entry.id);
+    }
+    await localDB.delete('customers', c.id);
+  }
 }
 
 export async function getCreditEntries(shopId: string, customerId?: string): Promise<CreditEntry[]> {
