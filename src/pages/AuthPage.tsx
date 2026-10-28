@@ -64,8 +64,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onAuthenticated }) => {
     <div className="min-h-screen bg-[#0B1914] flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         {/* Brand Icon */}
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-teal-600 text-white font-bold text-xl shadow-lg mb-4">
-          DF
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white p-2 shadow-xl mb-4 border border-teal-500/30 overflow-hidden">
+          <img
+            src="/assets/aistudio/Dukaanflow_Shop_Growth_Logo_9d5a1b40.png"
+            alt="DukaanFlow Logo"
+            className="w-full h-full object-contain"
+          />
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-white">DukaanFlow</h1>
         <p className="mt-1.5 text-xs text-slate-400">

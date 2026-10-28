@@ -16,12 +16,15 @@ import { CustomersPage } from './pages/CustomersPage';
 import { ExpensesPage } from './pages/ExpensesPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { LanguageProvider } from './context/LanguageContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { EntrySplash } from './components/common/EntrySplash';
 
 export default function App() {
   const [user, setUser] = useState<AppUser | null>(null);
   const [shop, setShop] = useState<Shop | null>(null);
   const [activePage, setActivePage] = useState<ActivePage>('dashboard');
   const [isInitializing, setIsInitializing] = useState(true);
+  const [showSplash, setShowSplash] = useState(true);
 
   // Restore session
   const initApp = async () => {
@@ -68,8 +71,12 @@ export default function App() {
   if (isInitializing) {
     return (
       <div className="min-h-screen bg-[#0B1914] flex flex-col items-center justify-center font-sans text-white">
-        <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center text-white font-bold text-lg mb-3 animate-pulse">
-          DF
+        <div className="w-14 h-14 rounded-2xl bg-white p-1.5 flex items-center justify-center shadow-xl mb-4 border border-teal-500/30 animate-pulse overflow-hidden">
+          <img
+            src="/assets/aistudio/Dukaanflow_Shop_Growth_Logo_9d5a1b40.png"
+            alt="DukaanFlow Logo"
+            className="w-full h-full object-contain"
+          />
         </div>
         <p className="text-xs text-slate-400 font-mono">Loading DukaanFlow...</p>
       </div>
@@ -77,39 +84,44 @@ export default function App() {
   }
 
   return (
-    <LanguageProvider>
-      {!user ? (
-        <AuthPage onAuthenticated={handleAuthenticated} />
-      ) : !shop ? (
-        <ShopOnboardingPage user={user} onShopCreated={handleShopCreated} />
-      ) : (
-        <AppLayout
-          user={user}
-          shop={shop}
-          activePage={activePage}
-          onNavigate={setActivePage}
-          onSignOut={handleSignOut}
-        >
-          {activePage === 'dashboard' && (
-            <DashboardPage shop={shop} onNavigate={setActivePage} />
-          )}
-          {activePage === 'pos' && (
-            <POSPage shop={shop} onNavigate={setActivePage} />
-          )}
-          {activePage === 'products' && (
-            <ProductsPage shop={shop} />
-          )}
-          {activePage === 'customers' && (
-            <CustomersPage shop={shop} />
-          )}
-          {activePage === 'expenses' && (
-            <ExpensesPage shop={shop} />
-          )}
-          {activePage === 'reports' && (
-            <ReportsPage shop={shop} />
-          )}
-        </AppLayout>
-      )}
-    </LanguageProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+        {/* Entry animation of raising bar graph with arrow, logo and app name */}
+        {showSplash && <EntrySplash onComplete={() => setShowSplash(false)} />}
+
+        {!user ? (
+          <AuthPage onAuthenticated={handleAuthenticated} />
+        ) : !shop ? (
+          <ShopOnboardingPage user={user} onShopCreated={handleShopCreated} />
+        ) : (
+          <AppLayout
+            user={user}
+            shop={shop}
+            activePage={activePage}
+            onNavigate={setActivePage}
+            onSignOut={handleSignOut}
+          >
+            {activePage === 'dashboard' && (
+              <DashboardPage shop={shop} user={user} onNavigate={setActivePage} />
+            )}
+            {activePage === 'pos' && (
+              <POSPage shop={shop} onNavigate={setActivePage} />
+            )}
+            {activePage === 'products' && (
+              <ProductsPage shop={shop} />
+            )}
+            {activePage === 'customers' && (
+              <CustomersPage shop={shop} />
+            )}
+            {activePage === 'expenses' && (
+              <ExpensesPage shop={shop} />
+            )}
+            {activePage === 'reports' && (
+              <ReportsPage shop={shop} />
+            )}
+          </AppLayout>
+        )}
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }

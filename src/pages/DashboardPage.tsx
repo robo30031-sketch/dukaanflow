@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Shop, DashboardMetrics, Sale, Product, SaleItem } from '../types/database';
+import { Shop, DashboardMetrics, Sale, Product, SaleItem, AppUser } from '../types/database';
 import { getDashboardMetrics, getSales, getProducts, getSaleWithItems } from '../services/db';
 import { MetricCard } from '../components/common/MetricCard';
 import { DataTable, Column } from '../components/common/DataTable';
@@ -27,10 +27,11 @@ import {
 
 interface DashboardPageProps {
   shop: Shop;
+  user?: AppUser | null;
   onNavigate: (page: any) => void;
 }
 
-export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }) => {
+export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, user, onNavigate }) => {
   const { t } = useTranslation();
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [recentSales, setRecentSales] = useState<Sale[]>([]);
@@ -219,13 +220,45 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, onNavigate }
 
   return (
     <div className="space-y-6">
+      {/* Namaste Greeting & Shop Owner Header */}
+      <div className="bg-gradient-to-r from-teal-900/10 via-emerald-800/5 to-transparent dark:from-teal-950/40 dark:via-emerald-950/20 p-4 sm:p-5 rounded-2xl border border-teal-800/15 dark:border-teal-700/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-teal-800/10 dark:bg-teal-900/40 border border-teal-700/20 flex items-center justify-center text-2xl shrink-0 shadow-2xs">
+            🙏
+          </div>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                Namaste, {user?.name || 'Owner'}
+              </span>
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
+                Verified Owner
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Welcome back to <span className="font-semibold text-teal-800 dark:text-teal-300">{shop.name}</span>. Here is your shop’s live performance and sales pulse.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 self-stretch sm:self-auto justify-end">
+          <button
+            onClick={() => onNavigate('pos')}
+            className="flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-teal-800 hover:bg-teal-900 rounded-xl transition-colors shadow-xs"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            <span>{t('new_sale')}</span>
+          </button>
+        </div>
+      </div>
+
       {/* Top Banner & Date Filter Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
             {shop.name}
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Real-time financial performance and inventory telemetry
           </p>
         </div>

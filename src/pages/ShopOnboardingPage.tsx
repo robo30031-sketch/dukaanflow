@@ -57,8 +57,12 @@ export const ShopOnboardingPage: React.FC<ShopOnboardingPageProps> = ({
   return (
     <div className="min-h-screen bg-[#F8FAF9] flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-xl text-center px-4">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-teal-800 text-white shadow-md mb-3">
-          <Store className="w-6 h-6" />
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white p-1.5 shadow-lg mb-3 border border-teal-500/30 overflow-hidden">
+          <img
+            src="/assets/aistudio/Dukaanflow_Shop_Growth_Logo_9d5a1b40.png"
+            alt="DukaanFlow Logo"
+            className="w-full h-full object-contain"
+          />
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
           Setup Your Dukaan (Shop)
