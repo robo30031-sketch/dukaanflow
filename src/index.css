@@ -5,14 +5,14 @@
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    color: #1e293b;
-    background-color: #f8faf9;
+    color: #22332A;
+    background-color: #FAF8F0;
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   html.dark body {
-    color: #f1f5f9;
-    background-color: #08120e;
+    color: #FAF8F0;
+    background-color: #0A1C14;
   }
 
   /* Monospace tabular figures */
@@ -22,119 +22,120 @@
   }
 }
 
-/* Dark mode surface elevations & palette */
+/* BahiPilot Brand Styling & Dark Mode elevations */
 html.dark .bg-white {
-  background-color: #10211a;
-  color: #f1f5f9;
+  background-color: #12281E;
+  color: #FAF8F0;
 }
 
-html.dark .bg-\[\#F8FAF9\] {
-  background-color: #08120e;
+html.dark .bg-\[\#F8FAF9\],
+html.dark .bg-\[\#FAF8F0\] {
+  background-color: #0A1C14;
 }
 
 html.dark .border-slate-200,
 html.dark .border-slate-200\/80,
 html.dark .border-slate-200\/90 {
-  border-color: #1b382d;
+  border-color: #1E4433;
 }
 
 html.dark .border-slate-100 {
-  border-color: #162c23;
+  border-color: #163628;
 }
 
 html.dark .bg-slate-50 {
-  background-color: #0c1914;
+  background-color: #0E2219;
 }
 
 html.dark .bg-slate-100 {
-  background-color: #142820;
+  background-color: #143024;
 }
 
 html.dark .text-slate-900 {
-  color: #f8fafc;
+  color: #FAF8F0;
 }
 
 html.dark .text-slate-800 {
-  color: #e2e8f0;
+  color: #E2ECE5;
 }
 
 html.dark .text-slate-700 {
-  color: #cbd5e1;
+  color: #CFDDD5;
 }
 
 html.dark .text-slate-600 {
-  color: #94a3b8;
+  color: #98ADA2;
 }
 
 html.dark .text-slate-500 {
-  color: #8395a7;
+  color: #84998E;
 }
 
 html.dark input:not([type="checkbox"]):not([type="radio"]), 
 html.dark select, 
 html.dark textarea {
-  background-color: #0b1b15;
-  border-color: #1f3f33;
-  color: #f8fafc;
+  background-color: #0C1E16;
+  border-color: #224D39;
+  color: #FAF8F0;
 }
 
 html.dark input:focus, 
 html.dark select:focus, 
 html.dark textarea:focus {
-  border-color: #14b8a6;
+  border-color: #2E9D58;
 }
 
 html.dark header {
-  background-color: rgba(11, 25, 20, 0.95) !important;
-  border-color: #18352b !important;
+  background-color: rgba(18, 60, 42, 0.95) !important;
+  border-color: #1B523A !important;
 }
 
 html.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]),
 html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) {
-  border-color: #1b382d;
+  border-color: #1E4433;
 }
 
 html.dark tr:hover td {
-  background-color: rgba(20, 42, 33, 0.4);
+  background-color: rgba(46, 157, 88, 0.12);
 }
 
 html.dark .bg-emerald-50 {
-  background-color: rgba(6, 78, 59, 0.25);
-  color: #34d399;
+  background-color: rgba(46, 157, 88, 0.2);
+  color: #D8F3C5;
 }
 
 html.dark .border-emerald-100 {
-  border-color: rgba(16, 185, 129, 0.3);
+  border-color: rgba(46, 157, 88, 0.35);
 }
 
 html.dark .bg-amber-50 {
-  background-color: rgba(120, 53, 15, 0.25);
-  color: #fbbf24;
+  background-color: rgba(229, 169, 60, 0.2);
+  color: #FCD34D;
 }
 
 html.dark .border-amber-100 {
-  border-color: rgba(245, 158, 11, 0.3);
+  border-color: rgba(229, 169, 60, 0.35);
 }
 
 html.dark .bg-rose-50 {
-  background-color: rgba(136, 19, 55, 0.25);
-  color: #f43f5e;
+  background-color: rgba(225, 29, 72, 0.2);
+  color: #FDA4AF;
 }
 
 html.dark .border-rose-100 {
-  border-color: rgba(244, 63, 94, 0.3);
+  border-color: rgba(225, 29, 72, 0.35);
 }
 
 html.dark .hover\:bg-slate-50:hover {
-  background-color: #12241d;
+  background-color: #153225;
 }
 
 html.dark .hover\:bg-slate-100:hover {
-  background-color: #162f25;
+  background-color: #183A2C;
 }
 
 html.dark .hover\:bg-teal-50:hover {
-  background-color: #123328;
+  background-color: #1A3E2E;
 }
 
 html.dark .shadow-xs,

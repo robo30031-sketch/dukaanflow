@@ -44,7 +44,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
           {/* Header */}
           <div className="text-center pb-4 border-b border-slate-200 space-y-1">
             <h2 className="text-lg font-bold uppercase tracking-tight text-slate-900">
-              {shop?.name || 'DukaanFlow Store'}
+              {shop?.name || 'BahiPilot Retail Store'}
             </h2>
             {shop?.address && <p className="text-xs text-slate-500">{shop.address}</p>}
             <div className="flex items-center justify-center gap-2 text-xs text-slate-500 font-mono">

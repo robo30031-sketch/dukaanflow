@@ -221,22 +221,25 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, user, onNavi
   return (
     <div className="space-y-6">
       {/* Namaste Greeting & Shop Owner Header */}
-      <div className="bg-gradient-to-r from-teal-900/10 via-emerald-800/5 to-transparent dark:from-teal-950/40 dark:via-emerald-950/20 p-4 sm:p-5 rounded-2xl border border-teal-800/15 dark:border-teal-700/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-gradient-to-r from-[#123C2A]/10 via-[#2E9D58]/5 to-transparent dark:from-[#123C2A]/40 dark:via-[#2E9D58]/20 p-4 sm:p-5 rounded-2xl border border-[#2E9D58]/25 dark:border-[#2E9D58]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-teal-800/10 dark:bg-teal-900/40 border border-teal-700/20 flex items-center justify-center text-2xl shrink-0 shadow-2xs">
+          <div className="w-12 h-12 rounded-2xl bg-[#D8F3C5] dark:bg-[#1B4B36] border border-[#2E9D58]/30 flex items-center justify-center text-2xl shrink-0 shadow-2xs">
             🙏
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <span className="text-xl sm:text-2xl font-bold tracking-tight text-[#123C2A] dark:text-white">
                 Namaste, {user?.name || 'Owner'}
               </span>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#D8F3C5] dark:bg-[#1B4B36] text-[#123C2A] dark:text-[#D8F3C5] border border-[#2E9D58]/30">
                 Verified Owner
               </span>
+              <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/80 dark:bg-[#12281E] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-[#1E4433]">
+                Every Sale. Every Stock. Every Rupee.
+              </span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Welcome back to <span className="font-semibold text-teal-800 dark:text-teal-300">{shop.name}</span>. Here is your shop’s live performance and sales pulse.
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+              Welcome back to <span className="font-semibold text-[#123C2A] dark:text-[#52D284]">{shop.name}</span>. Here is your shop’s live performance and sales pulse.
             </p>
           </div>
         </div>
@@ -244,7 +247,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ shop, user, onNavi
         <div className="flex items-center gap-2 self-stretch sm:self-auto justify-end">
           <button
             onClick={() => onNavigate('pos')}
-            className="flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-teal-800 hover:bg-teal-900 rounded-xl transition-colors shadow-xs"
+            className="flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-[#2E9D58] hover:bg-[#258349] rounded-xl transition-colors shadow-xs"
           >
             <ShoppingCart className="w-4 h-4" />
             <span>{t('new_sale')}</span>

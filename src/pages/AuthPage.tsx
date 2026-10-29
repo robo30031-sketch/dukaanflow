@@ -8,6 +8,8 @@ import { signIn, signUp } from '../services/db';
 import { AppUser } from '../types/database';
 import { Store, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
 
+import { BahiPilotLogo } from '../components/common/BahiPilotLogo';
+
 interface AuthPageProps {
   onAuthenticated: (user: AppUser) => void;
 }
@@ -61,19 +63,14 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onAuthenticated }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1914] flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        {/* Brand Icon */}
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white p-2 shadow-xl mb-4 border border-teal-500/30 overflow-hidden">
-          <img
-            src="/assets/aistudio/Dukaanflow_Shop_Growth_Logo_9d5a1b40.png"
-            alt="DukaanFlow Logo"
-            className="w-full h-full object-contain"
-          />
+    <div className="min-h-screen bg-[#123C2A] flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center px-4">
+        {/* BahiPilot Brand Logo */}
+        <div className="inline-block p-4 bg-white rounded-3xl shadow-2xl mb-4 border border-[#2E9D58]/30">
+          <BahiPilotLogo variant="stacked" size="lg" showTagline />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-white">DukaanFlow</h1>
-        <p className="mt-1.5 text-xs text-slate-400">
-          Small Business Management SaaS for Retail & Kirana Stores
+        <p className="text-xs text-[#D8F3C5] max-w-sm mx-auto leading-relaxed">
+          Manage inventory, record sales, track expenses, and manage customer credit from one simple application.
         </p>
       </div>
 
@@ -157,9 +154,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onAuthenticated }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-2.5 px-4 text-xs font-semibold text-white bg-teal-800 hover:bg-teal-900 rounded-lg transition-colors shadow-xs flex items-center justify-center gap-1.5 disabled:opacity-50"
+              className="w-full py-2.5 px-4 text-xs font-semibold text-white bg-[#2E9D58] hover:bg-[#258349] rounded-lg transition-colors shadow-xs flex items-center justify-center gap-1.5 disabled:opacity-50"
             >
-              <span>{isLoading ? 'Processing...' : isSignUp ? 'Create Shop Account' : 'Sign In to Store'}</span>
+              <span>{isLoading ? 'Processing...' : isSignUp ? 'Create BahiPilot Account' : 'Sign In to Store'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </form>
@@ -170,16 +167,16 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onAuthenticated }) => {
               type="button"
               onClick={handleQuickDemoLogin}
               disabled={isLoading}
-              className="w-full py-2 px-3 text-xs font-medium text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-lg transition-colors flex items-center justify-center gap-1.5"
+              className="w-full py-2 px-3 text-xs font-medium text-[#123C2A] bg-[#D8F3C5] hover:bg-[#c9efb0] border border-[#2E9D58]/40 rounded-lg transition-colors flex items-center justify-center gap-1.5"
             >
-              <Sparkles className="w-3.5 h-3.5 text-teal-600" />
+              <Sparkles className="w-3.5 h-3.5 text-[#2E9D58]" />
               <span>One-Click Demo Store (Sharma Kirana)</span>
             </button>
           </div>
         </div>
 
-        <div className="mt-6 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-teal-400" />
+        <div className="mt-6 text-center text-xs text-[#D8F3C5]/80 flex items-center justify-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-[#2E9D58]" />
           <span>Encrypted Auth & PostgreSQL Row Level Security (RLS)</span>
         </div>
       </div>

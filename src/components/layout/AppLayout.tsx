@@ -24,6 +24,7 @@ import {
 import { Shop, AppUser } from '../../types/database';
 import { useTranslation } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
+import { BahiPilotLogo } from '../common/BahiPilotLogo';
 
 export type ActivePage =
   | 'dashboard'
@@ -104,37 +105,26 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAF9] dark:bg-[#08120E] flex text-slate-800 dark:text-slate-100 font-sans antialiased">
+    <div className="min-h-screen bg-[#FAF8F0] dark:bg-[#0A1C14] flex text-[#22332A] dark:text-slate-100 font-sans antialiased">
       {/* =========================================================================
-          DESKTOP SIDEBAR ($260px width, deep forest palette #0B1914)
+          DESKTOP SIDEBAR ($260px width, BahiPilot deep forest palette #123C2A)
           ========================================================================= */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-[#0B1914] text-slate-300 border-r border-[#152B23] shrink-0 sticky top-0 h-screen z-20">
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-[#123C2A] text-slate-200 border-r border-[#1B523A] shrink-0 sticky top-0 h-screen z-20">
         {/* Brand Lockup */}
-        <div className="px-5 py-4 border-b border-[#18352B] flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-md shrink-0 border border-teal-500/30 overflow-hidden">
-              <img
-                src="/assets/aistudio/Dukaanflow_Shop_Growth_Logo_9d5a1b40.png"
-                alt="DukaanFlow Logo"
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div>
-              <span className="text-base font-bold text-white tracking-tight whitespace-nowrap block leading-tight">
-                {t('app_name')}
-              </span>
-              <p className="text-[10px] text-teal-400 font-mono tracking-wide">Track · Manage · Grow</p>
-            </div>
-          </div>
+        <div className="px-5 py-4 border-b border-[#1B523A] flex flex-col justify-center">
+          <BahiPilotLogo variant="horizontal" size="md" inverted showTagline={false} />
+          <p className="text-[10px] text-[#D8F3C5] font-medium tracking-tight mt-1.5 pl-1 opacity-90">
+            Every Sale. Every Stock. Every Rupee.
+          </p>
         </div>
 
         {/* Shop Switcher / Badge */}
-        <div className="px-4 py-3 mx-3 my-3 bg-[#11271E] rounded-xl border border-[#1B3E31] text-xs">
+        <div className="px-4 py-3 mx-3 my-3 bg-[#0C2B1D] rounded-xl border border-[#1B523A] text-xs">
           <div className="flex items-center gap-2 text-slate-200 font-medium truncate">
-            <Store className="w-4 h-4 text-teal-400 shrink-0" />
+            <Store className="w-4 h-4 text-[#2E9D58] shrink-0" />
             <span className="truncate">{shop?.name || 'My Store'}</span>
           </div>
-          <p className="text-[11px] text-slate-400 mt-0.5 truncate pl-6">
+          <p className="text-[11px] text-[#D8F3C5]/80 mt-0.5 truncate pl-6">
             {shop?.business_type ? `${shop.business_type.replace('_', ' ')}` : 'Retail'} · INR (₹)
           </p>
         </div>
@@ -150,11 +140,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 onClick={() => handleNavClick(item.id)}
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                   isActive
-                    ? 'bg-teal-700/80 text-white shadow-xs font-semibold'
-                    : 'text-slate-300 hover:bg-[#142E24] hover:text-white'
+                    ? 'bg-[#2E9D58] text-white shadow-xs font-semibold'
+                    : 'text-slate-200 hover:bg-[#1B523A] hover:text-white'
                 }`}
               >
-                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-teal-200' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#D8F3C5]' : 'text-slate-300'}`} />
                 <span className="truncate">{t(item.labelKey)}</span>
               </button>
             );
@@ -162,16 +152,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         </nav>
 
         {/* User & Sign Out */}
-        <div className="px-4 py-3 border-t border-[#18352B] bg-[#091510]">
+        <div className="px-4 py-3 border-t border-[#1B523A] bg-[#0A2217]">
           <div className="flex items-center justify-between">
             <div className="truncate">
               <p className="text-xs font-medium text-white truncate">{user.name}</p>
-              <p className="text-[10px] text-slate-400 truncate">{user.email}</p>
+              <p className="text-[10px] text-[#D8F3C5]/70 truncate">{user.email}</p>
             </div>
             <button
               onClick={onSignOut}
               title={t('sign_out')}
-              className="p-1.5 text-slate-400 hover:text-white hover:bg-[#152F24] rounded-lg transition-colors shrink-0"
+              className="p-1.5 text-slate-300 hover:text-white hover:bg-[#1B523A] rounded-lg transition-colors shrink-0"
               aria-label={t('sign_out')}
             >
               <LogOut className="w-4 h-4" />
@@ -270,7 +260,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             {activePage !== 'pos' && (
               <button
                 onClick={() => onNavigate('pos')}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-teal-800 hover:bg-teal-900 rounded-lg transition-colors shadow-xs whitespace-nowrap shrink-0"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-[#2E9D58] hover:bg-[#258349] rounded-lg transition-colors shadow-xs whitespace-nowrap shrink-0"
               >
                 <ShoppingCart className="w-3.5 h-3.5" />
                 <span>{t('new_sale')}</span>
@@ -286,32 +276,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               className="fixed inset-0 bg-slate-950/60"
               onClick={() => setMobileMenuOpen(false)}
             />
-            <div className="relative w-72 bg-[#0B1914] text-slate-300 p-4 flex flex-col justify-between shadow-2xl">
+            <div className="relative w-72 bg-[#123C2A] text-slate-200 p-4 flex flex-col justify-between shadow-2xl">
               <div>
-                <div className="flex items-center justify-between pb-4 border-b border-[#18352B]">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-white p-1 flex items-center justify-center shadow-xs shrink-0 border border-teal-500/30 overflow-hidden">
-                      <img
-                        src="/assets/aistudio/Dukaanflow_Shop_Growth_Logo_9d5a1b40.png"
-                        alt="DukaanFlow Logo"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div>
-                      <span className="text-sm font-bold text-white block leading-tight">{t('app_name')}</span>
-                      <p className="text-[9px] text-teal-400 font-mono">Retail SaaS</p>
-                    </div>
-                  </div>
+                <div className="flex items-center justify-between pb-4 border-b border-[#1B523A]">
+                  <BahiPilotLogo variant="horizontal" size="sm" inverted showTagline={false} />
                   <button
                     onClick={() => setMobileMenuOpen(false)}
-                    className="p-1 text-slate-400 hover:text-white"
+                    className="p-1 text-slate-300 hover:text-white"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
                 <div className="py-3">
-                  <p className="text-xs font-medium text-slate-400">Shop:</p>
+                  <p className="text-xs font-medium text-[#D8F3C5]/80">Shop:</p>
                   <p className="text-sm font-semibold text-white truncate">{shop?.name}</p>
                 </div>
 
@@ -324,7 +302,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         key={item.id}
                         onClick={() => handleNavClick(item.id)}
                         className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-lg whitespace-nowrap ${
-                          isActive ? 'bg-teal-700 text-white' : 'text-slate-300 hover:bg-[#142E24]'
+                          isActive ? 'bg-[#2E9D58] text-white shadow-xs font-semibold' : 'text-slate-200 hover:bg-[#1B523A]'
                         }`}
                       >
                         <Icon className="w-4 h-4 shrink-0" />
@@ -335,7 +313,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 </nav>
               </div>
 
-              <div className="pt-4 border-t border-[#18352B] space-y-2">
+              <div className="pt-4 border-t border-[#1B523A] space-y-2">
                 <button
                   onClick={onSignOut}
                   className="w-full flex items-center gap-2 px-3 py-2 text-xs text-rose-400 hover:bg-[#142E24] rounded-lg"

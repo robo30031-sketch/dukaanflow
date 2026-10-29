@@ -18,15 +18,24 @@ import { ReportsPage } from './pages/ReportsPage';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { EntrySplash } from './components/common/EntrySplash';
+import { BahiPilotIcon } from './components/common/BahiPilotLogo';
 
 export default function App() {
   const [user, setUser] = useState<AppUser | null>(null);
   const [shop, setShop] = useState<Shop | null>(null);
   const [activePage, setActivePage] = useState<ActivePage>('dashboard');
   const [isInitializing, setIsInitializing] = useState(true);
-  const [showSplash, setShowSplash] = useState(true);
 
-  // Restore session
+  // Show intro animation on the first visit of a session
+  const [showSplash, setShowSplash] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem('bahipilot_intro_shown') !== 'true';
+    } catch {
+      return true;
+    }
+  });
+
+  // Begin loading real application data immediately on mount without waiting for animation
   const initApp = async () => {
     try {
       const currentUser = await getCurrentUser();
@@ -45,6 +54,15 @@ export default function App() {
   useEffect(() => {
     initApp();
   }, []);
+
+  const handleIntroComplete = () => {
+    setShowSplash(false);
+    try {
+      sessionStorage.setItem('bahipilot_intro_shown', 'true');
+    } catch {
+      // ignore
+    }
+  };
 
   const handleAuthenticated = async (authenticatedUser: AppUser) => {
     setUser(authenticatedUser);
@@ -68,28 +86,26 @@ export default function App() {
     setActivePage('dashboard');
   };
 
-  if (isInitializing) {
-    return (
-      <div className="min-h-screen bg-[#0B1914] flex flex-col items-center justify-center font-sans text-white">
-        <div className="w-14 h-14 rounded-2xl bg-white p-1.5 flex items-center justify-center shadow-xl mb-4 border border-teal-500/30 animate-pulse overflow-hidden">
-          <img
-            src="/assets/aistudio/Dukaanflow_Shop_Growth_Logo_9d5a1b40.png"
-            alt="DukaanFlow Logo"
-            className="w-full h-full object-contain"
-          />
-        </div>
-        <p className="text-xs text-slate-400 font-mono">Loading DukaanFlow...</p>
-      </div>
-    );
-  }
-
   return (
     <ThemeProvider>
       <LanguageProvider>
-        {/* Entry animation of raising bar graph with arrow, logo and app name */}
-        {showSplash && <EntrySplash onComplete={() => setShowSplash(false)} />}
+        {/* BahiPilot 3.5s Brand Intro Animation (Session-based, with instant skip & reduced motion) */}
+        {showSplash && <EntrySplash onComplete={handleIntroComplete} />}
 
-        {!user ? (
+        {/* If app data is still initializing after intro, show loading state */}
+        {isInitializing ? (
+          <div className="min-h-screen bg-[#123C2A] flex flex-col items-center justify-center font-sans text-white">
+            <div className="p-3 bg-white rounded-3xl shadow-2xl mb-4 border border-[#2E9D58]/30 animate-pulse">
+              <BahiPilotIcon sizePx={56} />
+            </div>
+            <h1 className="text-xl font-bold tracking-tight text-white">
+              Bahi<span className="text-[#2E9D58]">Pilot</span>
+            </h1>
+            <p className="text-xs text-[#D8F3C5] font-mono mt-1">
+              Loading your shop records...
+            </p>
+          </div>
+        ) : !user ? (
           <AuthPage onAuthenticated={handleAuthenticated} />
         ) : !shop ? (
           <ShopOnboardingPage user={user} onShopCreated={handleShopCreated} />

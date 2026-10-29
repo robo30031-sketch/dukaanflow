@@ -8,6 +8,8 @@ import { createShop } from '../services/db';
 import { AppUser, Shop, BusinessType } from '../types/database';
 import { Store, Check, ArrowRight, ShieldCheck } from 'lucide-react';
 
+import { BahiPilotIcon } from '../components/common/BahiPilotLogo';
+
 interface ShopOnboardingPageProps {
   user: AppUser;
   onShopCreated: (shop: Shop) => void;
@@ -55,20 +57,16 @@ export const ShopOnboardingPage: React.FC<ShopOnboardingPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAF9] flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+    <div className="min-h-screen bg-[#FAF8F0] dark:bg-[#0A1C14] flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-xl text-center px-4">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white p-1.5 shadow-lg mb-3 border border-teal-500/30 overflow-hidden">
-          <img
-            src="/assets/aistudio/Dukaanflow_Shop_Growth_Logo_9d5a1b40.png"
-            alt="DukaanFlow Logo"
-            className="w-full h-full object-contain"
-          />
+        <div className="inline-block p-2 bg-white rounded-2xl shadow-lg mb-3 border border-[#2E9D58]/30">
+          <BahiPilotIcon sizePx={52} />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-bold tracking-tight text-[#123C2A] dark:text-white">
           Setup Your Dukaan (Shop)
         </h1>
-        <p className="mt-1 text-xs text-slate-500">
-          Welcome, {user.name}! Let’s set up your business profile. Each DukaanFlow account owns one store with strict database security.
+        <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
+          Welcome, {user.name}! Let’s set up your business profile. Each BahiPilot account owns one store with strict database security.
         </p>
       </div>
 
@@ -191,9 +189,9 @@ export const ShopOnboardingPage: React.FC<ShopOnboardingPageProps> = ({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-2.5 px-4 text-xs font-semibold text-white bg-teal-800 hover:bg-teal-900 rounded-lg transition-colors shadow-xs flex items-center justify-center gap-1.5 disabled:opacity-50"
+                className="w-full py-2.5 px-4 text-xs font-semibold text-white bg-[#2E9D58] hover:bg-[#258349] rounded-lg transition-colors shadow-xs flex items-center justify-center gap-1.5 disabled:opacity-50"
               >
-                <span>{isLoading ? 'Creating Store & Securing Database...' : 'Launch DukaanFlow Store'}</span>
+                <span>{isLoading ? 'Creating Store & Securing Database...' : 'Launch BahiPilot Store'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>

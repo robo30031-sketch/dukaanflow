@@ -60,7 +60,7 @@ export type TranslationKey =
 
 export const TRANSLATIONS: Record<string, Partial<Record<TranslationKey, string>>> = {
   en: {
-    app_name: 'DukaanFlow',
+    app_name: 'BahiPilot',
     nav_dashboard: 'Dashboard',
     nav_pos: 'POS Billing',
     nav_products: 'Inventory & Stock',
@@ -832,6 +832,9 @@ export const TRANSLATIONS: Record<string, Partial<Record<TranslationKey, string>
 };
 
 export function getTranslation(lang: string, key: TranslationKey): string {
+  if (key === 'app_name') {
+    return 'BahiPilot';
+  }
   if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
     return TRANSLATIONS[lang][key]!;
   }
